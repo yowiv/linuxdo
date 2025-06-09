@@ -592,10 +592,9 @@ def main_with_auto_like():
     # 检查CF_CLEARANCE（必须）
     cf_clearance = os.getenv('CF_CLEARANCE')
     if not cf_clearance:
-        # 如果环境变量没有，使用硬编码的默认值
-        cf_clearance = 'Ki7oQGgjT4OzwcWLK6TD767ckwlAlh9HoGRjdSA_5NY-1749460838-1.2.1.1-lepR0Dss2tD.94c3NTCUZ_tCBzrAR3s7IB5lt6VbSO1vpYeJuO8jhubTkE6gfLdtVwHSsAwHjE38bec_DlN6yMGItnmDGSzLpvRmzUFW1huW12bQ6qm4lsM7O_Jmj339gMYDTt1IYTyaYLug7m45JQebLVIl6p7HSO.gby6KkNEnzI3.vf6z4.GkmxfMlOrn.KSNOK60wUEOmjS_8cNHpbbwkEvwahB8VMlQYjHhOIxkX.2bhCui3NHREBQvoxZmmS6nSWVWUXEPmnvLlY8w8IqDhDQC7ppKtDtDHdE6RKgD1RW6MO6Ten.J6OQOjE.fllRohoxD44LTVor8C.hWu3UxYa6Ksas5JJ_gevDd7DXFm_5FImGgbQw9LT_QxpRc'
-        print(f"⚠️ 未检测到CF_CLEARANCE环境变量，使用默认值")
-    
+        print("❌ 未检测到CF_CLEARANCE环境变量")
+        print("请设置环境变量或在.env文件中添加: CF_CLEARANCE=your_value")
+        return
     # 执行登录
     result = login_linux_do()
     
@@ -604,6 +603,27 @@ def main_with_auto_like():
         print(f"用户名: {result['username']}")
         print(f"用户ID: {result['user_id']}")
         print(f"信任等级: {result['trust_level']}")
+        
+        # 测试cookies有效性
+        print("\n🔧 测试cookies有效性...")
+        test_result = test_cookies_validity(
+            cookies_string=result['cookies_string'],
+            csrf_token=result['csrf_token'],
+            username=result['username']
+        )
+        
+        if test_result['success']:
+            print("✅ Cookies有效性测试通过!")
+            print(f"   徽章总数: {test_result['badge_count']}")
+            print(f"   是否有基本用户徽章: {'是' if test_result['has_basic_user_badge'] else '否'}")
+            if test_result['basic_user_badge']:
+                badge = test_result['basic_user_badge']
+                print(f"   基本用户徽章获得时间: {badge.get('granted_at', '未知')}")
+        else:
+            print("❌ Cookies有效性测试失败!")
+            print(f"   错误: {test_result.get('error', '未知错误')}")
+            print("   可能需要重新获取CF_CLEARANCE或其他认证信息")
+            return
         
         # 读取环境变量配置
         enable_like = os.getenv('ENABLE_LIKE', 'true').lower() in ['true', '1', 'yes', 'on']
