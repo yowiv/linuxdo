@@ -1,6 +1,6 @@
 # Linux.do 论坛自动点赞工具
 
-一个用于自动登录 Linux.do 论坛并进行帖子浏览和点赞的 Python 工具。
+一个用于自动登录 Linux.do 论坛并进行帖子浏览和点赞的 Python 工具。(仅支持家宽，经测试GitHub Actions和CLAWCLOUD Run容器不能使用)
 
 ## 功能特性
 
